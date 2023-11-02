@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ELIZA-GPT</a> &gt; <a href="index.source.html" class="el_package">fr.univ_lyon1.info.m1.elizagpt.model</a> &gt; <span class="el_source">MessageProcessor.java</span></div><h1>MessageProcessor.java</h1><pre class="source lang-java linenums">package fr.univ_lyon1.info.m1.elizagpt.model;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+
+/**
+ * Logic to process a message (and probably reply to it).
+ */
+<span class="fc" id="L17">public class MessageProcessor {</span>
+    private List&lt;HBox&gt; messages;
+<span class="fc" id="L19">    private final Random random = new Random();</span>
+
+    /**
+     * Normlize the text: remove extra spaces, add a final dot if missing.
+     * 
+     * @param text
+     * @return normalized text.
+     */
+    public String normalize(final String text) {
+<span class="nc" id="L28">        return text.replaceAll(&quot;\\s+&quot;, &quot; &quot;)</span>
+<span class="nc" id="L29">                .replaceAll(&quot;^\\s+&quot;, &quot;&quot;)</span>
+<span class="nc" id="L30">                .replaceAll(&quot;\\s+$&quot;, &quot;&quot;)</span>
+<span class="nc" id="L31">                .replaceAll(&quot;[^\\.!?:]$&quot;, &quot;$0.&quot;);</span>
+    }
+
+    /**
+     * Information about conjugation of a verb.
+     */
+    public static class Verb {
+        private final String firstSingular;
+        private final String secondPlural;
+
+        public String getFirstSingular() {
+<span class="fc" id="L42">            return firstSingular;</span>
+        }
+
+        public String getSecondPlural() {
+<span class="fc" id="L46">            return secondPlural;</span>
+        }
+
+<span class="fc" id="L49">        Verb(final String firstSingular, final String secondPlural) {</span>
+<span class="fc" id="L50">            this.firstSingular = firstSingular;</span>
+<span class="fc" id="L51">            this.secondPlural = secondPlural;</span>
+<span class="fc" id="L52">        }</span>
+    }
+
+    /**
+     * List of 3rd group verbs and their correspondance from 1st person signular
+     * (Je) to 2nd person plural (Vous).
+     */
+<span class="fc" id="L59">    protected static final List&lt;Verb&gt; VERBS = Arrays.asList(</span>
+<span class="fc" id="L60">            new Verb(&quot;suis&quot;, &quot;êtes&quot;),</span>
+<span class="fc" id="L61">            new Verb(&quot;vais&quot;, &quot;allez&quot;),</span>
+<span class="fc" id="L62">            new Verb(&quot;dis&quot;, &quot;dites&quot;),</span>
+<span class="fc" id="L63">            new Verb(&quot;ai&quot;, &quot;avez&quot;),</span>
+<span class="fc" id="L64">            new Verb(&quot;peux&quot;, &quot;pouvez&quot;),</span>
+<span class="fc" id="L65">            new Verb(&quot;dois&quot;, &quot;devez&quot;),</span>
+<span class="fc" id="L66">            new Verb(&quot;fais&quot;, &quot;faites&quot;),</span>
+<span class="fc" id="L67">            new Verb(&quot;sais&quot;, &quot;savez&quot;),</span>
+<span class="fc" id="L68">            new Verb(&quot;dois&quot;, &quot;devez&quot;));</span>
+
+    /**
+     * Turn a 1st-person sentence (Je ...) into a plural 2nd person (Vous ...).
+     * The result is not capitalized to allow forming a new sentence.
+     *
+     * TODO: does not deal with all 3rd group verbs.
+     *
+     * @param text
+     * @return The 2nd-person sentence.
+     */
+    public String firstToSecondPerson(final String text) {
+<span class="fc" id="L80">        String processedText = text</span>
+<span class="fc" id="L81">                .replaceAll(&quot;[Jj]e ([a-z]*)e &quot;, &quot;vous $1ez &quot;);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        for (Verb v : VERBS) {</span>
+<span class="fc" id="L83">            processedText = processedText.replaceAll(</span>
+<span class="fc" id="L84">                    &quot;[Jj]e &quot; + v.getFirstSingular(),</span>
+<span class="fc" id="L85">                    &quot;vous &quot; + v.getSecondPlural());</span>
+        }
+<span class="fc" id="L87">        processedText = processedText</span>
+<span class="fc" id="L88">                .replaceAll(&quot;[Jj]e ([a-z]*)s &quot;, &quot;vous $1ssez &quot;)</span>
+<span class="fc" id="L89">                .replace(&quot;mon &quot;, &quot;votre &quot;)</span>
+<span class="fc" id="L90">                .replace(&quot;ma &quot;, &quot;votre &quot;)</span>
+<span class="fc" id="L91">                .replace(&quot;mes &quot;, &quot;vos &quot;)</span>
+<span class="fc" id="L92">                .replace(&quot;moi&quot;, &quot;vous&quot;);</span>
+<span class="fc" id="L93">        return processedText;</span>
+    }
+
+    /** Pick an element randomly in the array. */
+    public &lt;T&gt; T pickRandom(final T[] array) {
+<span class="nc" id="L98">        return array[random.nextInt(array.length)];</span>
+    }
+
+    /**
+     * find a random element in the array that matches the pattern.
+     */
+    public List&lt;HBox&gt; filterMessagesByPattern(final String patternText) {
+        Pattern pattern;
+<span class="nc" id="L106">        List&lt;HBox&gt; filteredMessages = new ArrayList&lt;&gt;();</span>
+
+        try {
+<span class="nc" id="L109">            pattern = Pattern.compile(patternText, Pattern.CASE_INSENSITIVE);</span>
+<span class="nc" id="L110">        } catch (PatternSyntaxException e) {</span>
+<span class="nc" id="L111">            e.printStackTrace();</span>
+<span class="nc" id="L112">            return messages; // Return all messages if pattern is invalid</span>
+        }
+
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        for (HBox hBox : messages) {</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">            for (Node label : hBox.getChildren()) {</span>
+<span class="nc" id="L117">                String labelText = ((Label) label).getText();</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                if (pattern.matcher(labelText).find()) {</span>
+<span class="nc" id="L119">                    filteredMessages.add(hBox);</span>
+<span class="nc" id="L120">                    break;</span>
+                }
+            }
+        }
+
+<span class="nc" id="L125">        return filteredMessages;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

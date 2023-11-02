@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.12.1">
+<file name="C:\Users\Koureich\Desktop\mif01\eliza-gpt\src\main\java\fr\univ_lyon1\info\m1\elizagpt\controller\MessageController.java">
+</file>
+<file name="C:\Users\Koureich\Desktop\mif01\eliza-gpt\src\main\java\fr\univ_lyon1\info\m1\elizagpt\model\MessageProcessor.java">
+</file>
+<file name="C:\Users\Koureich\Desktop\mif01\eliza-gpt\src\main\java\fr\univ_lyon1\info\m1\elizagpt\view\JfxView.java">
+</file>
+</checkstyle>

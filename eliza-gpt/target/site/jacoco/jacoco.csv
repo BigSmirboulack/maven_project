@@ -1,0 +1,6 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+ELIZA-GPT,fr.univ_lyon1.info.m1.elizagpt.model,MessageProcessor,77,129,6,2,17,25,6,4,3,3
+ELIZA-GPT,fr.univ_lyon1.info.m1.elizagpt.model,MessageProcessor.Verb,0,15,0,0,0,6,0,3,0,3
+ELIZA-GPT,fr.univ_lyon1.info.m1.elizagpt.view,JfxView,682,0,38,0,169,0,39,0,20,0
+ELIZA-GPT,fr.univ_lyon1.info.m1.elizagpt.controller,MessageController,44,0,0,0,13,0,4,0,4,0
+ELIZA-GPT,fr.univ_lyon1.info.m1.elizagpt,App,19,0,0,0,6,0,3,0,3,0
